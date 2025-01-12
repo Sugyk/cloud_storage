@@ -1,0 +1,22 @@
+rest:
+    path: v1/api/auth/
+        method: post
+        request:
+            body:
+                telegram_id: 
+                    params:
+                      - required
+                    type: int
+                    description: Add a new user into database if it not contains him else do nothing 
+                username:
+                      - required
+                    type: int
+        response:
+            - 200:
+                body:
+                    message:
+                        type: str
+            - 400:
+                body:
+                    message:
+                        type: str

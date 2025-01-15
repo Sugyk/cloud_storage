@@ -10,7 +10,7 @@ rest:
                     description: Add a new user into database if it not contains him else do nothing 
                 username:
                       - required
-                    type: int
+                    type: string
         response:
             - 200:
                 body:
@@ -20,3 +20,29 @@ rest:
                 body:
                     message:
                         type: str
+    path: v1/api/get_files/{user_id}
+        method: get
+        request:
+            params:
+                page:
+                    type: int
+                    default: 0
+                    description: define the offset of elements to send
+                limit:
+                    type: int
+                    default: 10
+                    description: define the volume of elements to send
+                user_id:
+                    type: int
+                    required: true
+                    description: the id of user whose files will send
+        response:
+            - 200:
+                body:
+                    files:
+                        type: array
+                        elements:
+                            id:
+                                type: int
+                            filename:
+                                type: string

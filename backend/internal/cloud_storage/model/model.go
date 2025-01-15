@@ -15,4 +15,5 @@ type Files struct {
 	Uploaded_at time.Time `db:"uploaded_at"`
 	User_id     int       `db:"user_id"`
 	Message_id  int       `db:"message_id"`
+	File_body   string    `db:"file_body"`
 }

@@ -2,16 +2,20 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fir1/rest-api/internal/cloud_storage/model"
 	"github.com/fir1/rest-api/pkg/db"
 	"github.com/jmoiron/sqlx"
 )
 
-const OFFSET = 10
-
 type Repository struct {
 	Db *sqlx.DB
+}
+
+type FileHead struct {
+	Id       int    `json:"id"`
+	Filename string `json:"filename"`
 }
 
 func NewRepository(db *sqlx.DB) Repository {
@@ -32,8 +36,9 @@ func (r Repository) Create(ctx context.Context, entity *model.Users) error {
 
 func (r Repository) FindFile(ctx context.Context, id int) (model.Files, error) {
 	entity := model.Files{}
-	query := "SELECT * FROM Files WHERE id = $1;"
+	query := "SELECT id FROM Files WHERE id = $1;"
 	err := r.Db.GetContext(ctx, &entity, query, id)
+	fmt.Println(err, "asdasdasd", entity)
 	return entity, db.HandleError(err)
 }
 
@@ -46,9 +51,10 @@ func (r Repository) DeleteFile(ctx context.Context, id int) error {
 	return nil
 }
 
-func (r Repository) ListFiles(ctx context.Context, user_id int, page int) ([]model.Files, error) {
-	entities := []model.Files{}
-	query := "SELECT * FROM Files WHERE user_id = $1 LIMIT 10 OFFSET $2;"
-	err := r.Db.GetContext(ctx, &entities, query, user_id, OFFSET*page)
+func (r Repository) ListFiles(ctx context.Context, user_id int, page int, offset int) ([]FileHead, error) {
+	var entities []FileHead
+	query := "SELECT id, filename FROM Files WHERE user_id = $1 LIMIT $2 OFFSET $3;"
+	err := r.Db.SelectContext(ctx, &entities, query, user_id, offset, offset*page)
+
 	return entities, db.HandleError(err)
 }

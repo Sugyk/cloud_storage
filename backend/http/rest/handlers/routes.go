@@ -13,8 +13,8 @@ func Register(r *mux.Router, lg *logrus.Logger, db *sqlx.DB) {
 	// adding logger middleware
 	r.Use(handler.MiddlewareLogger())
 	r.HandleFunc("/healthz", handler.Health())
-	r.HandleFunc("/todo", handler.Auth()).Methods(http.MethodPost)
-	r.HandleFunc("/todo/{id}", handler.GetFile()).Methods(http.MethodGet)
-	// r.HandleFunc("/todo/{id}", handler.Update()).Methods(http.MethodPut)
-	r.HandleFunc("/todo/{id}", handler.Delete()).Methods(http.MethodDelete)
+	r.HandleFunc("/v1/api/auth", handler.Auth()).Methods(http.MethodPost)
+	r.HandleFunc("/v1/api/get_file/{id}", handler.GetFile()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/api/delete_file/{id}", handler.Delete()).Methods(http.MethodDelete)
+	r.HandleFunc("/v1/api/get_files/{user_id}", handler.FilesList()).Methods(http.MethodGet)
 }

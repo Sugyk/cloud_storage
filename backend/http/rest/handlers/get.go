@@ -1,36 +1,37 @@
 package handlers
 
 import (
-	"errors"
 	"net/http"
 	"strconv"
+	"time"
 
-	"github.com/fir1/rest-api/pkg/erru"
 	"github.com/gorilla/mux"
 )
 
 func (s service) GetFile() http.HandlerFunc {
 	type response struct {
-		Id int `json:"id"`
+		Id          int       `json:"id"`
+		Filename    string    `json:"filename"`
+		File_size   int       `json:"file_size"`
+		Uploaded_at time.Time `json:"uploaded_at"`
+		File_body   string    `json:"file_body"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		vars := mux.Vars(r)
 
-		id, err := strconv.Atoi(vars["id"])
-		if err != nil {
-			s.respond(w, erru.ErrArgument{
-				Wrapped: errors.New("valid id must provide in path"),
-			}, 0)
-			return
-		}
+		id, _ := strconv.Atoi(vars["id"])
 
-		getResponse, err := s.cloudStorageService.GetFile(r.Context(), id)
+		getFileResponse, err := s.cloudStorageService.GetFile(r.Context(), id)
 		if err != nil {
 			s.respond(w, err, 0)
 			return
 		}
 		s.respond(w, response{
-			Id: getResponse.Id,
+			Id:          getFileResponse.Id,
+			Filename:    getFileResponse.Filename,
+			File_size:   getFileResponse.File_size,
+			Uploaded_at: getFileResponse.Uploaded_at,
+			File_body:   getFileResponse.File_body,
 		}, http.StatusOK)
 	}
 }

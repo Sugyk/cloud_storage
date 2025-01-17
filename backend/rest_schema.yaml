@@ -4,12 +4,11 @@ rest:
         request:
             body:
                 telegram_id: 
-                    params:
-                      - required
+                    required: True
                     type: int
                     description: Add a new user into database if it not contains him else do nothing 
                 username:
-                      - required
+                    required: True
                     type: string
         response:
             - 200:
@@ -46,3 +45,16 @@ rest:
                                 type: int
                             filename:
                                 type: string
+    path: v1/api/send_file/
+        method: post
+        request:
+            body:
+                telegram_id:
+                    type: int
+                    required: True
+                file_size:
+                    type: int
+                    required: True
+                file_size:
+                    type: int
+                    required: True

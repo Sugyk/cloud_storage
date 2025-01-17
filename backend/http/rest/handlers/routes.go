@@ -17,4 +17,5 @@ func Register(r *mux.Router, lg *logrus.Logger, db *sqlx.DB) {
 	r.HandleFunc("/v1/api/get_file/{id}", handler.GetFile()).Methods(http.MethodGet)
 	r.HandleFunc("/v1/api/delete_file/{id}", handler.Delete()).Methods(http.MethodDelete)
 	r.HandleFunc("/v1/api/get_files/{user_id}", handler.FilesList()).Methods(http.MethodGet)
+	r.HandleFunc("/v1/api/send_file", handler.SendFile()).Methods(http.MethodPost)
 }

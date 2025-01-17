@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/fir1/rest-api/internal/cloud_storage/model"
@@ -37,7 +38,12 @@ func (r Repository) Create(ctx context.Context, entity *model.Users) error {
 func (r Repository) FindFile(ctx context.Context, id int) (model.Files, error) {
 	entity := model.Files{}
 	query := "SELECT id FROM Files WHERE id = $1;"
-	err := r.Db.GetContext(ctx, &entity, query, id)
+	// err := r.Db.GetContext(ctx, &entity, query, id)
+	row := r.Db.QueryRowContext(ctx, query, id)
+	err := row.Scan(&entity)
+	if err == sql.ErrNoRows {
+		err = nil
+	}
 	fmt.Println(err, "asdasdasd", entity)
 	return entity, db.HandleError(err)
 }
@@ -52,9 +58,17 @@ func (r Repository) DeleteFile(ctx context.Context, id int) error {
 }
 
 func (r Repository) ListFiles(ctx context.Context, user_id int, page int, offset int) ([]FileHead, error) {
+	fmt.Println("qweqweqweqwe[[[[]]]]")
 	var entities []FileHead
 	query := "SELECT id, filename FROM Files WHERE user_id = $1 LIMIT $2 OFFSET $3;"
 	err := r.Db.SelectContext(ctx, &entities, query, user_id, offset, offset*page)
-
+	fmt.Println(err, "qweqweqweqwe[[[[]]]]")
 	return entities, db.HandleError(err)
+}
+
+func (r Repository) CreateFile(ctx context.Context, query_params model.Files) (sql.Result, error) {
+	query := "INSERT INTO Files (description, file_size, filename, uploaded_at, user_id, message_id, file_body) VALUES (:description, :file_size, :filename, :uploaded_at, :user_id, :message_id, :file_body) RETURNING id;"
+	id, err := r.Db.NamedExecContext(ctx, query, query_params)
+
+	return id, db.HandleError(err)
 }

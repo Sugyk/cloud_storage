@@ -37,10 +37,19 @@ func (r Repository) Create(ctx context.Context, entity *model.Users) error {
 
 func (r Repository) FindFile(ctx context.Context, id int) (model.Files, error) {
 	entity := model.Files{}
-	query := "SELECT id FROM Files WHERE id = $1;"
+	query := "SELECT id, description, file_size, filename, uploaded_at, user_id, message_id, file_body FROM Files WHERE id = $1;"
 	// err := r.Db.GetContext(ctx, &entity, query, id)
 	row := r.Db.QueryRowContext(ctx, query, id)
-	err := row.Scan(&entity)
+	err := row.Scan(
+		&entity.Id,
+		&entity.Description,
+		&entity.File_size,
+		&entity.Filename,
+		&entity.Uploaded_at,
+		&entity.User_id,
+		&entity.Message_id,
+		&entity.File_body,
+	)
 	if err == sql.ErrNoRows {
 		err = nil
 	}
